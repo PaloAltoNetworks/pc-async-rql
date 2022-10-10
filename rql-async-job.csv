@@ -1,0 +1,8 @@
+#Results for query "config from cloud.resource where cloud.type = 'aws' AND api.name = 'aws-describe-vpc-endpoints' AND json.rule = _DateTime.daysBetween($.x,$.y) equals 4" executed for time range from: Oct 09, 2022 15.02 PDT America/Los_Angeles, to: Oct 10, 2022 15.02 PDT America/Los_Angeles and executed by ahamiltonsut@paloaltonetworks.com
+Resource Name,Service,Account,Region,Last Modified,Deleted
+vpce-089f5b4c038a6d891,Amazon VPC,AWS Eggs,AWS Mumbai,"May 29, 2022 08.23 PDT America/Los_Angeles",false
+vpce-032784c51e062dfd8,Amazon VPC,AWS Eggs,AWS Oregon,"May 27, 2022 11.24 PDT America/Los_Angeles",false
+vpce-01a4a890a50db5882,Amazon VPC,AWS Eggs,AWS Oregon,"May 27, 2022 11.24 PDT America/Los_Angeles",false
+vpce-0c3f52324712d926a,Amazon VPC,AWS Eggs,AWS Ohio,"May 27, 2022 11.24 PDT America/Los_Angeles",false
+vpce-0c3db84c8e97a6683,Amazon VPC,AWS Eggs,AWS Virginia,"May 27, 2022 11.24 PDT America/Los_Angeles",false
+vpce-0323df77b95576d69,Amazon VPC,AWS Eggs,AWS Virginia,"May 27, 2022 11.24 PDT America/Los_Angeles",false
