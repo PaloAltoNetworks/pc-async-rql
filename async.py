@@ -6,8 +6,6 @@ import time as time_module
 import os
 #==============================================================================
 def submit_rql_job(session, rql, name, time_type, time):
-    payload = {}
-
     if time_type == 'relative':
         payload = {
             "limit": 100,
@@ -45,8 +43,8 @@ def submit_rql_job(session, rql, name, time_type, time):
             "timeRange":{
                 "type":"absolute",
                 "value":{
-                    "endTime":time[0],
-                    "startTime":time[1]
+                    "endTime":time[1],
+                    "startTime":time[0]
                 }
             },
             "heuristicSearch":False,
@@ -111,42 +109,43 @@ if __name__ == '__main__':
     name = ''
     rql_file_path = ''
 
-    if '-name' in sys.argv and 'rql_file' not in sys.argv:
+    if '-name' in sys.argv and '-rql_file' not in sys.argv:
         try:
             name = sys.argv[sys.argv.index('-name') + 1]
         except:
             print('ERROR. No name specified. Exiting...')
             exit()
 
-    if '-name' not in sys.argv and 'rql_file' not in sys.argv:
+    if '-name' not in sys.argv and '-rql_file' not in sys.argv:
         print('ERROR. Missing -name argument. Exiting...')
         exit()
 
-    if 'rql' in sys.argv:
+    if '-rql' in sys.argv:
         try:
-            rql = sys.argv[sys.argv.index('rql') + 1]
+            rql = sys.argv[sys.argv.index('-rql') + 1]
+            rql = rql.replace('\\','')
         except:
             print('ERROR. No RQL specified. Exiting...')
             exit()
     
-    if 'rql_file' in sys.argv:
+    if '-rql_file' in sys.argv:
         try:
-            rql_file_path = sys.argv[sys.argv.index('rql_file') + 1]
+            rql_file_path = sys.argv[sys.argv.index('-rql_file') + 1]
         except:
             print('ERROR. Missing file path. Exiting...')
             exit()
 
-    if 'time' in sys.argv:
+    if '-time' in sys.argv:
         try:
-            time_in_hours = sys.argv[sys.argv.index('time') + 1]
+            time = sys.argv[sys.argv.index('-time') + 1]
             time_type = 'relative'
         except:
             print('ERROR. No time specified. Exiting...')
             exit()
 
-    if 'time_range' in sys.argv:
+    if '-time_range' in sys.argv:
         try:
-            time_range = sys.argv[sys.argv.index('time_range') + 1].split(',')
+            time_range = sys.argv[sys.argv.index('-time_range') + 1].split(',')
             time_type = 'absolute'
             if len(time_range) != 2:
                 print('ERROR. Invalid time range format. Exiting...')
@@ -155,11 +154,11 @@ if __name__ == '__main__':
             print('ERROR. No time range specified. Exiting...')
             exit()
 
-    if 'rql' not in sys.argv and 'rql_file' not in sys.argv:
+    if '-rql' not in sys.argv and '-rql_file' not in sys.argv:
         print('No \'rql\' or \'rql_file\' argument specified. Exiting...')
         exit()
     
-    if 'time' not in sys.argv and 'time_range' not in sys.argv and 'rql_file' not in sys.argv:
+    if '-time' not in sys.argv and '-time_range' not in sys.argv and '-rql_file' not in sys.argv:
         print('No \'time\' or \'time_range\' argument specified. Exiting...')
         exit()
 
@@ -185,7 +184,7 @@ if __name__ == '__main__':
         name += '_' + str(time_module.time())
         name = name.replace(' ', '_')
         name =name.replace('.','_')
-        submit_rql_job(session, rql, name, time_type, time)
+        download_urls.append(submit_rql_job(session, rql, name, time_type, time))
 
     with open('local/urls.csv', 'w') as outfile:
         for el in download_urls:

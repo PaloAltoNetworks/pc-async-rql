@@ -2,3 +2,6 @@
 *.yaml
 *.json
 *.csv
+!rqls.csv
+.vscode
+env
