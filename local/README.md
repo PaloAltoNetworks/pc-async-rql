@@ -1,0 +1,1 @@
+Directory where download urls are stored incase script stops unexpectedly 

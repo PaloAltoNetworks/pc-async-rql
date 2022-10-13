@@ -1,9 +1,9 @@
-from symbol import except_clause
 from pcpi import session_loader
 from loguru import logger
 import sys
 import csv
-
+import time as time_module
+import os
 #==============================================================================
 def submit_rql_job(session, rql, name, time_type, time):
     payload = {}
@@ -37,11 +37,11 @@ def submit_rql_job(session, rql, name, time_type, time):
             return ['bad','bad']
 
     elif time_type == 'absolute':
+        time = time.split(',')
         payload = {
             "limit":100,
             "withResourceJson":False,
-            "query":"config from cloud.resource where api.name = 'alibaba-cloud-action-trail' ",
-            "id":"ec63118b-4560-41e3-909a-4258f6c700d0",
+            "query":rql,
             "timeRange":{
                 "type":"absolute",
                 "value":{
@@ -62,21 +62,49 @@ def submit_rql_job(session, rql, name, time_type, time):
         return ['bad','bad']
 
 #==============================================================================
-def wait_on_jobs():
+def wait_on_jobs(session):
     download_urls = []
     with open('local/urls.csv', 'r') as infile:
         for line in infile:
             download_urls.append(line.strip().split(','))
-    print(download_urls)
-    
 
-
+    while len(download_urls) > 0:
+        for index, url in enumerate(download_urls):
+            res = session.request('GET', url[0])
+            if res.status_code == 200:
+                session.logger.info(f'Search: {url[1]} completed.')
+                download_file(session,url[0],url[1])
+                download_urls.pop(index)
+            else:
+                session.logger.info(f'Search: {url[1]} in progress.')
 
 #==============================================================================
+def download_file(session,url,name):
+    
+    session.logger.info(f"Downloading: {name}")
+    curl = f"""
+    curl -k -o output/{name}.csv  "{session.api_url}{url}" \\
+      -H 'Connection: keep-alive' \\
+      -H 'sec-ch-ua: "Chromium";v="94", "Google Chrome";v="94", ";Not A Brand";v="99"' \\
+      -H 'x-redlock-auth: '{session.token} \\
+      -H 'sec-ch-ua-mobile: ?1' \\
+      -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Mobile Safari/537.36' \\
+      -H 'Content-Type: application/json' \\
+      -H 'Accept: application/json, text/plain, */*' \\
+      -H 'x-redlock-request-id: aaaaaaaaaaaa91548' \\
+      -H 'sec-ch-ua-platform: "Android"' \\
+      -H 'Origin: '"{session.api_url}/" \\
+      -H 'Sec-Fetch-Site: same-site' \\
+      -H 'Sec-Fetch-Mode: cors' \\
+      -H 'Sec-Fetch-Dest: empty' \\
+      -H 'Referer: '"{session.api_url}/" \\
+      -H 'Accept-Language: en-US,en;q=0.9' \\
+      --compressed
+    """
+    os.system(curl)
+    
+#==============================================================================
 if __name__ == '__main__':
-    session_man = session_loader.load_from_file()
-    session = session_man.create_cspm_session()
-
     time = None
     time_type = None
     rql = ''
@@ -135,6 +163,10 @@ if __name__ == '__main__':
         print('No \'time\' or \'time_range\' argument specified. Exiting...')
         exit()
 
+
+    session_man = session_loader.load_from_file(logger=logger)
+    session = session_man.create_cspm_session()
+
     download_urls = []
     if rql_file_path:
         with open(rql_file_path, 'r') as csvfile:
@@ -142,15 +174,22 @@ if __name__ == '__main__':
             for row in reader:
                 rql_query = row[0]
                 name = row[1]
+                #Updated name with current time
+                name += '_' + str(time_module.time())
+                name = name.replace(' ', '_')
+                name = name.replace('.','_')
                 time_type = row[2]
                 time = row[3]
                 download_urls.append(submit_rql_job(session, rql_query, name, time_type, time))
     else:
+        name += '_' + str(time_module.time())
+        name = name.replace(' ', '_')
+        name =name.replace('.','_')
         submit_rql_job(session, rql, name, time_type, time)
 
     with open('local/urls.csv', 'w') as outfile:
         for el in download_urls:
             outfile.write(el[0] + ',' + el[1])
             outfile.write('\n')
-
-    wait_on_jobs()
+  
+    wait_on_jobs(session)
