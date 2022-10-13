@@ -76,6 +76,8 @@ def wait_on_jobs(session):
             else:
                 session.logger.info(f'Search: {url[1]} in progress.')
 
+        time_module.sleep(10)
+
 #==============================================================================
 def download_file(session,url,name):
     
@@ -145,11 +147,8 @@ if __name__ == '__main__':
 
     if '-time_range' in sys.argv:
         try:
-            time_range = sys.argv[sys.argv.index('-time_range') + 1].split(',')
+            time = sys.argv[sys.argv.index('-time_range') + 1]
             time_type = 'absolute'
-            if len(time_range) != 2:
-                print('ERROR. Invalid time range format. Exiting...')
-                exit()
         except:
             print('ERROR. No time range specified. Exiting...')
             exit()
