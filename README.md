@@ -33,13 +33,13 @@ CSV file format:
 
 **An example RQL CSV is included. Named "rqls.csv"**
 
-- Relative Time
+- Relative Time  
 "\<rql>",<name_of_search>,relative,<time_in_hours>
-EX:
+EX:  
 ```"config from iam where cloud.account != 'hats'",My FIRSTs search,relative,24```
 - Absolute Time
 "\<rql>",<name_of_search>,absolute,"\<start_time_epoch>,\<end_time_epoch>"
-EX:
+EX:  
 ```"config from iam where cloud.account != 'shirts'",My SECONDs search,absolute,"166187406700,1662046867000"```
 
 
