@@ -24,14 +24,15 @@ python3 async.py -rql "config from iam where cloud.account != 'hats'" -name my_s
 
 ### Multi RQL from file
 
-**An example RQL CSV is included. Named "rqls.csv"**
-
 ```bash
 python3 async.py rql_file <path_to_file>
 python3 async.py rql_file input/my_rqls.csv
 python3 async.py rql_file rqls.csv
 ```
 CSV file format:
+
+**An example RQL CSV is included. Named "rqls.csv"**
+
 - Relative Time
 "\<rql>",<name_of_search>,relative,<time_in_hours>
 EX:
