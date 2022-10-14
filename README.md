@@ -36,11 +36,11 @@ CSV file format:
 - Relative Time  
 "\<rql>",<name_of_search>,relative,<time_in_hours>
 EX:  
-```"config from iam where cloud.account != 'hats'",My FIRSTs search,relative,24```
+```"config from iam where cloud.account != 'hats'",my_search,relative,24```
 - Absolute Time  
 "\<rql>",<name_of_search>,absolute,"\<start_time_epoch>,\<end_time_epoch>"
 EX:  
-```"config from iam where cloud.account != 'shirts'",My SECONDs search,absolute,"166187406700,1662046867000"```
+```"config from iam where cloud.account != 'shirts'",my_search2,absolute,"166187406700,1662046867000"```
 
 
 # Bash
